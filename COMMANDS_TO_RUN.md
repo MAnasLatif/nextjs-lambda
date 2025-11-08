@@ -22,6 +22,7 @@ git push -u origin main
 ```
 
 **Example** (if username is "manaslatif"):
+
 ```bash
 git remote add origin https://github.com/manaslatif/nextjs-lambda.git
 git push -u origin main
@@ -30,16 +31,19 @@ git push -u origin main
 ## Step 3: Setup AWS (If Not Already Done)
 
 Check if AWS is configured:
+
 ```bash
 aws sts get-caller-identity
 ```
 
 If you see an error, configure AWS:
+
 ```bash
 aws configure
 ```
 
 Enter your:
+
 - AWS Access Key ID: `AKIA...`
 - AWS Secret Access Key: `...`
 - Default region: `us-east-1`
@@ -66,6 +70,7 @@ endpoint: https://xxxxxxxxxx.lambda-url.us-east-1.on.aws
 ```
 
 **Test your URLs:**
+
 - Home: `https://xxxxxxxxxx.lambda-url.us-east-1.on.aws/`
 - About: `https://xxxxxxxxxx.lambda-url.us-east-1.on.aws/about`
 
@@ -82,6 +87,7 @@ git push
 ## ✅ DONE!
 
 You now have:
+
 1. ✅ Public GitHub repository
 2. ✅ Live AWS Lambda function
 3. ✅ Two working URLs to share
@@ -89,11 +95,13 @@ You now have:
 ## 📤 Share These:
 
 **GitHub Repository:**
+
 ```
 https://github.com/YOUR_USERNAME/nextjs-lambda
 ```
 
 **Live Application:**
+
 ```
 https://your-url.lambda-url.us-east-1.on.aws
 ```
@@ -101,16 +109,19 @@ https://your-url.lambda-url.us-east-1.on.aws
 ## 🔧 Useful Commands
 
 View deployment info:
+
 ```bash
 serverless info
 ```
 
 View logs:
+
 ```bash
 serverless logs -f app --tail
 ```
 
 Remove from AWS (cleanup):
+
 ```bash
 serverless remove
 ```

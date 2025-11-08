@@ -3,6 +3,7 @@
 ## ✅ What's Been Created
 
 A complete Next.js 15 application with:
+
 - ✅ **2 Pages**: Home and About pages with beautiful Tailwind CSS styling
 - ✅ **TypeScript**: Full type safety
 - ✅ **Serverless Configuration**: Ready to deploy to AWS Lambda
@@ -32,16 +33,18 @@ You'll get a URL like: `https://xyz123.lambda-url.us-east-1.on.aws`
 
 ### Option 2: Publish to GitHub First
 
-1. **Create GitHub Repo**: 
+1. **Create GitHub Repo**:
+
    - Go to https://github.com/new
    - Name: `nextjs-lambda`
    - Make it Public
    - Don't initialize with README
 
 2. **Push Code**:
+
    ```bash
    cd /Users/manaslatif/Documents/Zubair/nextjs-lambda
-   
+
    # Replace YOUR_USERNAME with your GitHub username
    git remote add origin https://github.com/YOUR_USERNAME/nextjs-lambda.git
    git push -u origin main
@@ -69,8 +72,9 @@ aws configure
 ```
 
 Enter:
+
 - AWS Access Key ID
-- AWS Secret Access Key  
+- AWS Secret Access Key
 - Region: `us-east-1`
 - Output: `json`
 
@@ -107,6 +111,7 @@ nextjs-lambda/
 ## 🎨 Pages Preview
 
 ### Home Page (/)
+
 - Welcome message
 - Feature list
 - Link to About page
@@ -114,6 +119,7 @@ nextjs-lambda/
 - Gradient blue background
 
 ### About Page (/about)
+
 - Project information
 - Architecture details
 - Technology stack
@@ -131,20 +137,21 @@ nextjs-lambda/
 
 ## 🔧 Important Commands
 
-| Command | What It Does |
-|---------|--------------|
-| `npm run dev` | Run locally (http://localhost:3000) |
-| `npm run build` | Build for production |
-| `serverless deploy` | Deploy to AWS Lambda |
-| `serverless info` | Show deployment info |
-| `serverless logs -f app` | View Lambda logs |
-| `serverless remove` | Delete from AWS |
-| `git status` | Check git status |
-| `git push` | Push to GitHub |
+| Command                  | What It Does                        |
+| ------------------------ | ----------------------------------- |
+| `npm run dev`            | Run locally (http://localhost:3000) |
+| `npm run build`          | Build for production                |
+| `serverless deploy`      | Deploy to AWS Lambda                |
+| `serverless info`        | Show deployment info                |
+| `serverless logs -f app` | View Lambda logs                    |
+| `serverless remove`      | Delete from AWS                     |
+| `git status`             | Check git status                    |
+| `git push`               | Push to GitHub                      |
 
 ## 💰 AWS Cost
 
 **FREE** for most usage:
+
 - 1M Lambda requests/month free
 - 400,000 GB-seconds compute free
 - This project easily stays within free tier
@@ -177,7 +184,8 @@ functions:
 
 After deployment, share:
 
-1. **GitHub Repository**: 
+1. **GitHub Repository**:
+
    ```
    https://github.com/YOUR_USERNAME/nextjs-lambda
    ```
