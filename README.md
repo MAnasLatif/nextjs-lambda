@@ -1,16 +1,10 @@
 # Next.js on AWS Lambda with Serverless FrameworkThis is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-
-
 A production-ready Next.js 15 application deployed on AWS Lambda using the Serverless Framework. This project demonstrates how to run a modern Next.js app with TypeScript, Tailwind CSS, and the App Router in a serverless environment.## Getting Started
-
-
 
 ## 🚀 Live DemoFirst, run the development server:
 
-
-
-**Lambda Function URL:** *(Will be provided after deployment)*```bash
+**Lambda Function URL:** _(Will be provided after deployment)_```bash
 
 npm run dev
 
@@ -32,11 +26,7 @@ yarn dev
 
 - ✅ **Two Sample Pages** - Home and About pagesOpen [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-
-
 ## 🏗️ ArchitectureYou can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-
 
 This application uses:This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
@@ -47,8 +37,6 @@ This application uses:This project uses [`next/font`](https://nextjs.org/docs/ap
 - **serverless-http** - Adapter to run Express apps in AWS Lambda
 
 - **Lambda Function URL** - Direct public endpoint (no API Gateway needed)To learn more about Next.js, take a look at the following resources:
-
-
 
 ## 📦 Prerequisites- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 
@@ -64,11 +52,13 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 3. **AWS CLI** configured with credentials:
 
-   ```bashThe easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ````bashThe easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
    aws configure
 
    ```Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+   ````
 
 4. **Serverless Framework** installed globally:
    ```bash
@@ -78,12 +68,14 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 ## 🛠️ Installation
 
 1. Clone this repository:
+
    ```bash
    git clone <repository-url>
    cd nextjs-lambda
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -98,16 +90,19 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 ### Deploy to AWS Lambda
 
 1. Make sure your AWS credentials are configured:
+
    ```bash
    aws sts get-caller-identity
    ```
 
 2. Deploy using Serverless Framework:
+
    ```bash
    serverless deploy
    ```
 
 3. After deployment, you'll receive a Function URL that looks like:
+
    ```
    https://xxxxxxxxxx.lambda-url.us-east-1.on.aws/
    ```
@@ -117,6 +112,7 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 ### Deployment Output
 
 After running `serverless deploy`, you'll see:
+
 ```
 ✔ Service deployed to stack nextjs-lambda-app-dev (XXs)
 
@@ -161,15 +157,15 @@ Key configuration options:
 
 ```yaml
 provider:
-  runtime: nodejs20.x         # Node.js version
-  region: us-east-1          # AWS region
-  memorySize: 1024           # Lambda memory (MB)
-  timeout: 30                # Timeout (seconds)
+  runtime: nodejs20.x # Node.js version
+  region: us-east-1 # AWS region
+  memorySize: 1024 # Lambda memory (MB)
+  timeout: 30 # Timeout (seconds)
 
 functions:
   app:
-    handler: handler.handler  # Lambda handler
-    url: true                 # Enable Function URL
+    handler: handler.handler # Lambda handler
+    url: true # Enable Function URL
 ```
 
 ### next.config.ts
@@ -226,10 +222,12 @@ Or use AWS CloudWatch console to view detailed logs and metrics.
 ### Common Issues
 
 1. **Deployment fails**
+
    - Check AWS credentials: `aws sts get-caller-identity`
    - Verify IAM permissions for Lambda and CloudFormation
 
 2. **Function times out**
+
    - Increase `timeout` in `serverless.yml`
    - Check Lambda logs for errors
 
@@ -240,13 +238,13 @@ Or use AWS CloudWatch console to view detailed logs and metrics.
 
 ## 🌟 Features Comparison
 
-| Feature | Traditional EC2 | AWS Lambda |
-|---------|----------------|------------|
-| Cost | Always running | Pay per use |
-| Scaling | Manual | Automatic |
-| Management | Full control | Fully managed |
-| Cold start | None | 1-3 seconds |
-| Best for | High traffic | Variable traffic |
+| Feature    | Traditional EC2 | AWS Lambda       |
+| ---------- | --------------- | ---------------- |
+| Cost       | Always running  | Pay per use      |
+| Scaling    | Manual          | Automatic        |
+| Management | Full control    | Fully managed    |
+| Cold start | None            | 1-3 seconds      |
+| Best for   | High traffic    | Variable traffic |
 
 ## 📚 Learn More
 

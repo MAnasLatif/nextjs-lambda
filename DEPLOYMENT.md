@@ -3,26 +3,31 @@
 ## Step-by-Step Deployment
 
 ### 1. Build the Application
+
 ```bash
 npm run build
 ```
 
 ### 2. Verify AWS Credentials
+
 ```bash
 aws sts get-caller-identity
 ```
 
 You should see your AWS account information. If not, run:
+
 ```bash
 aws configure
 ```
 
 ### 3. Deploy to AWS Lambda
+
 ```bash
 serverless deploy
 ```
 
 This will:
+
 - Package your Next.js application
 - Create/update Lambda function
 - Create Function URL
@@ -31,6 +36,7 @@ This will:
 ### 4. Access Your Application
 
 After deployment, you'll see output like:
+
 ```
 endpoint: https://abcd1234.lambda-url.us-east-1.on.aws
 ```
@@ -46,6 +52,7 @@ Copy this URL and open it in your browser!
 ## Removing from AWS
 
 To clean up all resources:
+
 ```bash
 serverless remove
 ```
@@ -53,6 +60,7 @@ serverless remove
 ## Testing Locally
 
 Before deploying, test locally:
+
 ```bash
 npm run dev
 ```
@@ -61,14 +69,14 @@ Visit http://localhost:3000
 
 ## Common Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Run locally |
-| `npm run build` | Build for production |
-| `serverless deploy` | Deploy to AWS |
-| `serverless logs -f app` | View logs |
-| `serverless info` | Show deployment info |
-| `serverless remove` | Delete from AWS |
+| Command                  | Description          |
+| ------------------------ | -------------------- |
+| `npm run dev`            | Run locally          |
+| `npm run build`          | Build for production |
+| `serverless deploy`      | Deploy to AWS        |
+| `serverless logs -f app` | View logs            |
+| `serverless info`        | Show deployment info |
+| `serverless remove`      | Delete from AWS      |
 
 ## Troubleshooting
 
@@ -84,6 +92,7 @@ Visit http://localhost:3000
 ## Cost
 
 AWS Lambda Free Tier includes:
+
 - 1,000,000 requests per month
 - 400,000 GB-seconds of compute time
 

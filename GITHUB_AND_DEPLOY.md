@@ -27,6 +27,7 @@ git push -u origin main
 ```
 
 Example (replace with your actual username):
+
 ```bash
 git remote add origin https://github.com/manaslatif/nextjs-lambda.git
 git push -u origin main
@@ -41,6 +42,7 @@ aws configure
 ```
 
 You'll be prompted for:
+
 - **AWS Access Key ID**: Your AWS access key
 - **AWS Secret Access Key**: Your secret key
 - **Default region**: `us-east-1` (or your preferred region)
@@ -58,6 +60,7 @@ You'll be prompted for:
 ### Required IAM Permissions
 
 Your AWS user needs these permissions:
+
 - `AWSLambdaFullAccess`
 - `AmazonS3FullAccess` (for deployment artifacts)
 - `CloudFormationFullAccess`
@@ -77,6 +80,7 @@ serverless deploy
 ```
 
 Expected output:
+
 ```
 Deploying nextjs-lambda-app to stage dev (us-east-1)
 
@@ -109,6 +113,7 @@ Update the README.md file with your actual Lambda URL:
 ```
 
 Then commit and push:
+
 ```bash
 git add README.md
 git commit -m "Add deployed Lambda URL to README"
@@ -125,22 +130,26 @@ After completing these steps, share these URLs:
 ## Monitoring and Management
 
 ### View Logs
+
 ```bash
 serverless logs -f app --tail
 ```
 
 ### View Deployment Info
+
 ```bash
 serverless info
 ```
 
 ### Update Deployment
+
 ```bash
 npm run build
 serverless deploy
 ```
 
 ### Remove from AWS (cleanup)
+
 ```bash
 serverless remove
 ```
@@ -148,24 +157,30 @@ serverless remove
 ## Troubleshooting
 
 ### Issue: "AWS Credentials not found"
+
 **Solution**: Run `aws configure` with valid credentials
 
 ### Issue: "Insufficient permissions"
+
 **Solution**: Ensure IAM user has required permissions (see above)
 
 ### Issue: "Deployment package too large"
+
 **Solution**: Already optimized, but you can add more patterns to `serverless.yml` exclude list
 
 ### Issue: "Function times out"
+
 **Solution**: Increase timeout in `serverless.yml`:
+
 ```yaml
 provider:
-  timeout: 60  # Increase from 30 to 60 seconds
+  timeout: 60 # Increase from 30 to 60 seconds
 ```
 
 ## Cost Information
 
 AWS Lambda Free Tier (always free):
+
 - 1M requests per month
 - 400,000 GB-seconds compute time
 
@@ -182,6 +197,7 @@ AWS Lambda Free Tier (always free):
 ## Support
 
 If you encounter issues:
+
 1. Check the [Troubleshooting](#troubleshooting) section
 2. Review AWS CloudWatch logs
 3. Verify AWS credentials and permissions
