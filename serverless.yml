@@ -1,0 +1,29 @@
+service: nextjs-lambda-app
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  memorySize: 1024
+  timeout: 30
+  environment:
+    NODE_ENV: production
+
+functions:
+  app:
+    handler: handler.handler
+    url: true
+    events:
+      - httpApi: '*'
+
+package:
+  patterns:
+    - '!node_modules/.cache/**'
+    - '!.git/**'
+    - '!.next/cache/**'
+    - '.next/**'
+    - 'public/**'
+    - 'handler.js'
+    - 'node_modules/**'
