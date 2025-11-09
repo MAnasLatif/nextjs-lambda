@@ -1,11 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
-  // Disable image optimization for Lambda
-  images: {
-    unoptimized: true,
-  },
+  // Professional Next.js configuration
+  output: "export", // Static export for simple deployment
 };
 
 export default nextConfig;

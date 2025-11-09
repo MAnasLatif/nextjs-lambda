@@ -1,0 +1,567 @@
+{
+ "Resources": {
+  "NextjsWebsiteBucket3FA8DE47": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "aws-cdk:auto-delete-objects",
+      "Value": "true"
+     },
+     {
+      "Key": "aws-cdk:cr-owned:bc3031c9",
+      "Value": "true"
+     }
+    ],
+    "WebsiteConfiguration": {
+     "ErrorDocument": "404.html",
+     "IndexDocument": "index.html"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "NextjsLambdaStack/NextjsWebsiteBucket/Resource"
+   }
+  },
+  "NextjsWebsiteBucketPolicy29FDCCDC": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "NextjsWebsiteBucket3FA8DE47"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:PutBucketPolicy",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::GetAtt": [
+          "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+          "Arn"
+         ]
+        }
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "NextjsWebsiteBucket3FA8DE47",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "NextjsWebsiteBucket3FA8DE47",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "CanonicalUser": {
+         "Fn::GetAtt": [
+          "OAIE1EFC67F",
+          "S3CanonicalUserId"
+         ]
+        }
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "NextjsWebsiteBucket3FA8DE47",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "NextjsWebsiteBucket3FA8DE47",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NextjsLambdaStack/NextjsWebsiteBucket/Policy/Resource"
+   }
+  },
+  "NextjsWebsiteBucketAutoDeleteObjectsCustomResource8A1FC91E": {
+   "Type": "Custom::S3AutoDeleteObjects",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "NextjsWebsiteBucket3FA8DE47"
+    }
+   },
+   "DependsOn": [
+    "NextjsWebsiteBucketPolicy29FDCCDC"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "NextjsLambdaStack/NextjsWebsiteBucket/AutoDeleteObjectsCustomResource/Default"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "NextjsLambdaStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-420747712829-us-east-1",
+     "S3Key": "6c1e9b465fa4b2d651dbc9ce3e732d8702a7b19137327684a71d89f1d355f1a2.zip"
+    },
+    "Timeout": 900,
+    "MemorySize": 128,
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x",
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Lambda function for auto-deleting objects in ",
+       {
+        "Ref": "NextjsWebsiteBucket3FA8DE47"
+       },
+       " S3 bucket."
+      ]
+     ]
+    }
+   },
+   "DependsOn": [
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "NextjsLambdaStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
+    "aws:asset:path": "asset.6c1e9b465fa4b2d651dbc9ce3e732d8702a7b19137327684a71d89f1d355f1a2",
+    "aws:asset:property": "Code"
+   }
+  },
+  "OAIE1EFC67F": {
+   "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+   "Properties": {
+    "CloudFrontOriginAccessIdentityConfig": {
+     "Comment": "Allows CloudFront to reach the bucket"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NextjsLambdaStack/OAI/Resource"
+   }
+  },
+  "NextjsDistributionD7CE023A": {
+   "Type": "AWS::CloudFront::Distribution",
+   "Properties": {
+    "DistributionConfig": {
+     "CustomErrorResponses": [
+      {
+       "ErrorCode": 404,
+       "ResponseCode": 404,
+       "ResponsePagePath": "/404.html"
+      }
+     ],
+     "DefaultCacheBehavior": {
+      "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+      "Compress": true,
+      "TargetOriginId": "NextjsLambdaStackNextjsDistributionOrigin1F6414020",
+      "ViewerProtocolPolicy": "redirect-to-https"
+     },
+     "DefaultRootObject": "index.html",
+     "Enabled": true,
+     "HttpVersion": "http2",
+     "IPV6Enabled": true,
+     "Origins": [
+      {
+       "CustomOriginConfig": {
+        "OriginProtocolPolicy": "http-only",
+        "OriginSSLProtocols": [
+         "TLSv1.2"
+        ]
+       },
+       "DomainName": {
+        "Fn::Select": [
+         2,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::GetAtt": [
+             "NextjsWebsiteBucket3FA8DE47",
+             "WebsiteURL"
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "Id": "NextjsLambdaStackNextjsDistributionOrigin1F6414020"
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NextjsLambdaStack/NextjsDistribution/Resource"
+   }
+  },
+  "DeployWebsiteAwsCliLayer17DBC421": {
+   "Type": "AWS::Lambda::LayerVersion",
+   "Properties": {
+    "Content": {
+     "S3Bucket": "cdk-hnb659fds-assets-420747712829-us-east-1",
+     "S3Key": "d3adb8f8245549682ed42bc738adfed018ab3d9442ade840a7f42553830499d4.zip"
+    },
+    "Description": "/opt/awscli/aws"
+   },
+   "Metadata": {
+    "aws:cdk:path": "NextjsLambdaStack/DeployWebsite/AwsCliLayer/Resource",
+    "aws:asset:path": "asset.d3adb8f8245549682ed42bc738adfed018ab3d9442ade840a7f42553830499d4.zip",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Content"
+   }
+  },
+  "DeployWebsiteCustomResourceD116527B": {
+   "Type": "Custom::CDKBucketDeployment",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+      "Arn"
+     ]
+    },
+    "SourceBucketNames": [
+     "cdk-hnb659fds-assets-420747712829-us-east-1"
+    ],
+    "SourceObjectKeys": [
+     "b99a0cadc09ef923b35fbfe7b1ce4950c5bc0f5fdf284ec56b690162753d63db.zip"
+    ],
+    "DestinationBucketName": {
+     "Ref": "NextjsWebsiteBucket3FA8DE47"
+    },
+    "Prune": true,
+    "DistributionId": {
+     "Ref": "NextjsDistributionD7CE023A"
+    },
+    "DistributionPaths": [
+     "/*"
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "NextjsLambdaStack/DeployWebsite/CustomResource/Default"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "NextjsLambdaStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::cdk-hnb659fds-assets-420747712829-us-east-1"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::cdk-hnb659fds-assets-420747712829-us-east-1/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "NextjsWebsiteBucket3FA8DE47",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "NextjsWebsiteBucket3FA8DE47",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "cloudfront:GetInvalidation",
+        "cloudfront:CreateInvalidation"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+    "Roles": [
+     {
+      "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "NextjsLambdaStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-420747712829-us-east-1",
+     "S3Key": "2d56e153cac88d3e0c2f842e8e6f6783b8725bf91f95e0673b4725448a56e96d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+     }
+    },
+    "Handler": "index.handler",
+    "Layers": [
+     {
+      "Ref": "DeployWebsiteAwsCliLayer17DBC421"
+     }
+    ],
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.9",
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "NextjsLambdaStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource",
+    "aws:asset:path": "asset.2d56e153cac88d3e0c2f842e8e6f6783b8725bf91f95e0673b4725448a56e96d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/21RwWoCMRD9lt7jtHV76FVXBKGgKPS6xGSU0WwimUSRsP/eZNeqhZ7mzcvLzMvLGN6rCt5e5IVHSh9HhraQNkGqo8hUk7iCNI3qiEHUO3tDQ1k5Q+r6oG/90EwlYyeUcVHvvLMB0tLTnuxEKWReaLSBQn+5Lpp50fyrmBEHT9sYyNkif+47wVWTNJ6Mu7ZZD8Pu2Z0QkhkDw6SUThjZbrWElMd8ySv6b/Rcxm7I7g0GZ+fRqn7RHWTpL+4EyRbS2hksdF8fGQyo60QdObh2jeyiV4Pyjv8crbw7k0ZfohK9w5x7DmB/89mY4rHJ36AMweTCtaHetngevozhFPPbrNMIB349jz/gM3/ogYlGPuYQW4T1UH8AC8eWUu0BAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "NextjsLambdaStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "DistributionDomainName": {
+   "Description": "CloudFront Distribution Domain Name",
+   "Value": {
+    "Fn::GetAtt": [
+     "NextjsDistributionD7CE023A",
+     "DomainName"
+    ]
+   }
+  },
+  "WebsiteURL": {
+   "Description": "Website URL",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Fn::GetAtt": [
+        "NextjsDistributionD7CE023A",
+        "DomainName"
+       ]
+      }
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

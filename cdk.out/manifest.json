@@ -1,0 +1,149 @@
+{
+  "version": "36.0.0",
+  "artifacts": {
+    "NextjsLambdaStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "NextjsLambdaStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "NextjsLambdaStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://420747712829/us-east-1",
+      "properties": {
+        "templateFile": "NextjsLambdaStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::420747712829:role/cdk-hnb659fds-deploy-role-420747712829-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::420747712829:role/cdk-hnb659fds-cfn-exec-role-420747712829-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-420747712829-us-east-1/a4bb73769228ed1e4f01de529f6202cc67446a041113f746ffe1010cb8058fe2.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "NextjsLambdaStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::420747712829:role/cdk-hnb659fds-lookup-role-420747712829-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "NextjsLambdaStack.assets"
+      ],
+      "metadata": {
+        "/NextjsLambdaStack/NextjsWebsiteBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NextjsWebsiteBucket3FA8DE47"
+          }
+        ],
+        "/NextjsLambdaStack/NextjsWebsiteBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NextjsWebsiteBucketPolicy29FDCCDC"
+          }
+        ],
+        "/NextjsLambdaStack/NextjsWebsiteBucket/AutoDeleteObjectsCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NextjsWebsiteBucketAutoDeleteObjectsCustomResource8A1FC91E"
+          }
+        ],
+        "/NextjsLambdaStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+          }
+        ],
+        "/NextjsLambdaStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+          }
+        ],
+        "/NextjsLambdaStack/OAI/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OAIE1EFC67F"
+          }
+        ],
+        "/NextjsLambdaStack/NextjsDistribution/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NextjsDistributionD7CE023A"
+          }
+        ],
+        "/NextjsLambdaStack/DeployWebsite/AwsCliLayer/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeployWebsiteAwsCliLayer17DBC421"
+          }
+        ],
+        "/NextjsLambdaStack/DeployWebsite/CustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeployWebsiteCustomResourceD116527B"
+          }
+        ],
+        "/NextjsLambdaStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+          }
+        ],
+        "/NextjsLambdaStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF"
+          }
+        ],
+        "/NextjsLambdaStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536"
+          }
+        ],
+        "/NextjsLambdaStack/DistributionDomainName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DistributionDomainName"
+          }
+        ],
+        "/NextjsLambdaStack/WebsiteURL": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WebsiteURL"
+          }
+        ],
+        "/NextjsLambdaStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/NextjsLambdaStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/NextjsLambdaStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "NextjsLambdaStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}
