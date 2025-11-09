@@ -11,17 +11,12 @@ provider:
 
 functions:
   app:
-    handler: handler.handler
+    handler: .open-next/server-functions/default/index.handler
     url:
       cors: true
 
 package:
+  individually: true
   patterns:
-    - '!node_modules/**'
-    - '!.git/**'
-    - '!.next/cache/**'
-    - '!.next/standalone/node_modules/.cache/**'
-    - '.next/standalone/**'
-    - '.next/static/**'
-    - 'public/**'
-    - 'handler.mjs'
+    - '!**'
+    - '.open-next/server-functions/default/**'
