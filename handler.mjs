@@ -1,79 +1,108 @@
-import { parse } from 'url';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-let server;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-async function startServer() {
-  if (!server) {
-    // The standalone server creates its own HTTP server
-    // We just need to initialize it
-    server = true; // Mark as initialized
+let nextServer;
+
+async function getNextServer() {
+  if (!nextServer) {
+    // Import the Next.js standalone server
+    const NextServer = (await import('./.next/standalone/server.js')).default;
+    nextServer = new NextServer({
+      conf: {
+        distDir: './.next',
+        compress: false,
+      },
+      dev: false,
+      dir: __dirname,
+    });
+    await nextServer.prepare();
   }
+  return nextServer;
 }
 
-export const handler = async (event, context) => {
-  await startServer();
-  
+export const handler = async (event) => {
   try {
+    const server = await getNextServer();
+    
     // Extract request details from Lambda event
     const path = event.rawPath || event.path || '/';
     const method = event.requestContext?.http?.method || event.httpMethod || 'GET';
     const headers = event.headers || {};
-    const body = event.body || '';
-    const queryString = event.rawQueryString || '';
+    const body = event.isBase64Encoded ? Buffer.from(event.body || '', 'base64').toString() : event.body || '';
     
-    // Build full URL
-    const url = queryString ? `${path}?${queryString}` : path;
+    // Create a mock request/response for Next.js
+    const req = {
+      url: path + (event.rawQueryString ? `?${event.rawQueryString}` : ''),
+      method,
+      headers,
+      body,
+    };
+    
+    const res = {
+      statusCode: 200,
+      headers: {},
+      body: '',
+      finished: false,
+      writeHead(status, responseHeaders) {
+        this.statusCode = status;
+        if (responseHeaders) {
+          this.headers = { ...this.headers, ...responseHeaders };
+        }
+      },
+      setHeader(key, value) {
+        this.headers[key.toLowerCase()] = value;
+      },
+      getHeader(key) {
+        return this.headers[key.toLowerCase()];
+      },
+      end(chunk) {
+        if (chunk) {
+          this.body = chunk;
+        }
+        this.finished = true;
+      },
+      write(chunk) {
+        this.body += chunk;
+      },
+    };
+    
+    // Render the Next.js page
+    await server.getRequestHandler()(req, res);
+    
+    // Wait for response to finish
+    await new Promise((resolve) => {
+      const checkFinished = setInterval(() => {
+        if (res.finished) {
+          clearInterval(checkFinished);
+          resolve();
+        }
+      }, 10);
+      
+      // Timeout after 25 seconds
+      setTimeout(() => {
+        clearInterval(checkFinished);
+        resolve();
+      }, 25000);
+    });
     
     return {
-      statusCode: 200,
-      headers: {
-        'content-type': 'text/html',
-      },
-      body: `<!DOCTYPE html>
-<html>
-<head>
-  <title>Next.js on Lambda</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-  <div class="container mx-auto px-4 py-16">
-    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12">
-      <h1 class="text-5xl font-bold text-gray-900 mb-6">
-        🎉 Success! Next.js is running on AWS Lambda!
-      </h1>
-      <p class="text-xl text-gray-600 mb-8">
-        Your Next.js application has been successfully deployed to AWS Lambda using the Serverless Framework.
-      </p>
-      <div class="bg-blue-50 rounded-lg p-6 mb-8">
-        <h2 class="text-2xl font-semibold text-gray-900 mb-4">Features:</h2>
-        <ul class="space-y-2 text-gray-700">
-          <li>✅ Next.js 15 with App Router</li>
-          <li>✅ TypeScript for type safety</li>
-          <li>✅ Tailwind CSS for styling</li>
-          <li>✅ Serverless Framework deployment</li>
-          <li>✅ AWS Lambda Function URL</li>
-        </ul>
-      </div>
-      <div class="flex gap-4">
-        <a href="/about" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
-          Go to About Page →
-        </a>
-        <a href="https://github.com/MAnasLatif/nextjs-lambda" target="_blank" class="inline-block bg-gray-800 hover:bg-gray-900 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
-          View on GitHub
-        </a>
-      </div>
-    </div>
-  </div>
-</body>
-</html>`,
+      statusCode: res.statusCode,
+      headers: res.headers,
+      body: res.body,
     };
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Handler Error:', error);
     return {
       statusCode: 500,
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ error: 'Internal Server Error', message: error.message }),
+      body: JSON.stringify({ 
+        error: 'Internal Server Error', 
+        message: error.message,
+        stack: error.stack 
+      }),
     };
   }
 };
