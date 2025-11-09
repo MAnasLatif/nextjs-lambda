@@ -5,7 +5,7 @@ A production-ready Next.js 15 application deployed on AWS Lambda using the Serve
 ## 🔗 Links
 
 - **GitHub Repository**: [https://github.com/MAnasLatif/nextjs-lambda](https://github.com/MAnasLatif/nextjs-lambda)
-- **Lambda Function URL**: *(Deploy using `serverless deploy` to get your URL)*
+- **Live Demo (AWS Lambda)**: [https://mtms7xe4ayr5ypd6t4clpe3sdm0ifqff.lambda-url.us-east-1.on.aws/](https://mtms7xe4ayr5ypd6t4clpe3sdm0ifqff.lambda-url.us-east-1.on.aws/)
 
 ## 📋 Features
 
