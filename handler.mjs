@@ -1,107 +1,145 @@
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { parse } from 'url';
+import next from 'next';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const dev = false;
+const hostname = 'localhost';
+const port = 3000;
 
-let nextServer;
+let app;
+let handle;
 
-async function getNextServer() {
-  if (!nextServer) {
-    // Import the Next.js standalone server
-    const NextServer = (await import('./.next/standalone/server.js')).default;
-    nextServer = new NextServer({
+async function getNextApp() {
+  if (!app) {
+    app = next({ 
+      dev, 
+      hostname, 
+      port,
+      dir: './.next/standalone',
       conf: {
         distDir: './.next',
-        compress: false,
-      },
-      dev: false,
-      dir: __dirname,
+      }
     });
-    await nextServer.prepare();
+    await app.prepare();
+    handle = app.getRequestHandler();
   }
-  return nextServer;
+  return { app, handle };
 }
 
 export const handler = async (event) => {
   try {
-    const server = await getNextServer();
-    
+    const { handle } = await getNextApp();
+
     // Extract request details from Lambda event
-    const path = event.rawPath || event.path || '/';
-    const method = event.requestContext?.http?.method || event.httpMethod || 'GET';
+    const path = event.rawPath || event.path || "/";
+    const method = event.requestContext?.http?.method || event.httpMethod || "GET";
     const headers = event.headers || {};
-    const body = event.isBase64Encoded ? Buffer.from(event.body || '', 'base64').toString() : event.body || '';
-    
-    // Create a mock request/response for Next.js
+    const body = event.isBase64Encoded
+      ? Buffer.from(event.body || "", "base64").toString()
+      : event.body || "";
+
+    // Parse the URL
+    const parsedUrl = parse(path + (event.rawQueryString ? `?${event.rawQueryString}` : ""), true);
+
+    // Create a mock request object
     const req = {
-      url: path + (event.rawQueryString ? `?${event.rawQueryString}` : ''),
+      url: parsedUrl.href,
       method,
       headers,
       body,
+      connection: {},
+      socket: {},
     };
-    
-    const res = {
+
+    // Create a mock response object
+    let responseData = {
       statusCode: 200,
       headers: {},
-      body: '',
+      body: "",
+    };
+
+    const res = {
+      statusCode: 200,
       finished: false,
+      headersSent: false,
       writeHead(status, responseHeaders) {
-        this.statusCode = status;
+        responseData.statusCode = status;
         if (responseHeaders) {
-          this.headers = { ...this.headers, ...responseHeaders };
+          responseData.headers = { ...responseData.headers, ...responseHeaders };
         }
+        this.headersSent = true;
+        return this;
       },
       setHeader(key, value) {
-        this.headers[key.toLowerCase()] = value;
+        responseData.headers[key.toLowerCase()] = value;
       },
       getHeader(key) {
-        return this.headers[key.toLowerCase()];
+        return responseData.headers[key.toLowerCase()];
+      },
+      removeHeader(key) {
+        delete responseData.headers[key.toLowerCase()];
+      },
+      write(chunk) {
+        if (typeof chunk === 'string') {
+          responseData.body += chunk;
+        } else if (Buffer.isBuffer(chunk)) {
+          responseData.body += chunk.toString('utf8');
+        }
+        return true;
       },
       end(chunk) {
         if (chunk) {
-          this.body = chunk;
+          if (typeof chunk === 'string') {
+            responseData.body += chunk;
+          } else if (Buffer.isBuffer(chunk)) {
+            responseData.body += chunk.toString('utf8');
+          }
         }
         this.finished = true;
+        return this;
       },
-      write(chunk) {
-        this.body += chunk;
-      },
+      on() {},
+      once() {},
+      emit() {},
     };
-    
-    // Render the Next.js page
-    await server.getRequestHandler()(req, res);
-    
+
+    // Handle the request with Next.js
+    await handle(req, res, parsedUrl);
+
     // Wait for response to finish
     await new Promise((resolve) => {
+      if (res.finished) {
+        resolve();
+        return;
+      }
+      
       const checkFinished = setInterval(() => {
         if (res.finished) {
           clearInterval(checkFinished);
           resolve();
         }
       }, 10);
-      
+
       // Timeout after 25 seconds
       setTimeout(() => {
         clearInterval(checkFinished);
         resolve();
       }, 25000);
     });
-    
+
     return {
-      statusCode: res.statusCode,
-      headers: res.headers,
-      body: res.body,
+      statusCode: responseData.statusCode,
+      headers: responseData.headers,
+      body: responseData.body,
     };
   } catch (error) {
-    console.error('Handler Error:', error);
+    console.error("Handler Error:", error);
     return {
       statusCode: 500,
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ 
-        error: 'Internal Server Error', 
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        error: "Internal Server Error",
         message: error.message,
-        stack: error.stack 
+        stack: error.stack,
       }),
     };
   }
