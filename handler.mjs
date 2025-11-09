@@ -1,135 +1,52 @@
-import { parse } from 'url';
-import next from 'next';
-
-const dev = false;
-const hostname = 'localhost';
-const port = 3000;
-
-let app;
-let handle;
-
-async function getNextApp() {
-  if (!app) {
-    app = next({ 
-      dev, 
-      hostname, 
-      port,
-      dir: './.next/standalone',
-      conf: {
-        distDir: './.next',
-      }
-    });
-    await app.prepare();
-    handle = app.getRequestHandler();
-  }
-  return { app, handle };
-}
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 export const handler = async (event) => {
   try {
-    const { handle } = await getNextApp();
-
-    // Extract request details from Lambda event
+    // Extract the path from the event
     const path = event.rawPath || event.path || "/";
-    const method = event.requestContext?.http?.method || event.httpMethod || "GET";
-    const headers = event.headers || {};
-    const body = event.isBase64Encoded
-      ? Buffer.from(event.body || "", "base64").toString()
-      : event.body || "";
-
-    // Parse the URL
-    const parsedUrl = parse(path + (event.rawQueryString ? `?${event.rawQueryString}` : ""), true);
-
-    // Create a mock request object
-    const req = {
-      url: parsedUrl.href,
-      method,
-      headers,
-      body,
-      connection: {},
-      socket: {},
-    };
-
-    // Create a mock response object
-    let responseData = {
-      statusCode: 200,
-      headers: {},
-      body: "",
-    };
-
-    const res = {
-      statusCode: 200,
-      finished: false,
-      headersSent: false,
-      writeHead(status, responseHeaders) {
-        responseData.statusCode = status;
-        if (responseHeaders) {
-          responseData.headers = { ...responseData.headers, ...responseHeaders };
-        }
-        this.headersSent = true;
-        return this;
-      },
-      setHeader(key, value) {
-        responseData.headers[key.toLowerCase()] = value;
-      },
-      getHeader(key) {
-        return responseData.headers[key.toLowerCase()];
-      },
-      removeHeader(key) {
-        delete responseData.headers[key.toLowerCase()];
-      },
-      write(chunk) {
-        if (typeof chunk === 'string') {
-          responseData.body += chunk;
-        } else if (Buffer.isBuffer(chunk)) {
-          responseData.body += chunk.toString('utf8');
-        }
-        return true;
-      },
-      end(chunk) {
-        if (chunk) {
-          if (typeof chunk === 'string') {
-            responseData.body += chunk;
-          } else if (Buffer.isBuffer(chunk)) {
-            responseData.body += chunk.toString('utf8');
-          }
-        }
-        this.finished = true;
-        return this;
-      },
-      on() {},
-      once() {},
-      emit() {},
-    };
-
-    // Handle the request with Next.js
-    await handle(req, res, parsedUrl);
-
-    // Wait for response to finish
-    await new Promise((resolve) => {
-      if (res.finished) {
-        resolve();
-        return;
+    
+    // Map paths to HTML files
+    let htmlFile;
+    if (path === "/" || path === "/index.html") {
+      htmlFile = ".next/standalone/.next/server/app/index.html";
+    } else if (path === "/about" || path === "/about.html") {
+      htmlFile = ".next/standalone/.next/server/app/about.html";
+    } else if (path === "/favicon.ico") {
+      const faviconPath = ".next/standalone/.next/server/app/favicon.ico.body";
+      try {
+        const favicon = readFileSync(faviconPath);
+        return {
+          statusCode: 200,
+          headers: {
+            "content-type": "image/x-icon",
+            "cache-control": "public, max-age=31536000, immutable",
+          },
+          body: favicon.toString('base64'),
+          isBase64Encoded: true,
+        };
+      } catch {
+        return {
+          statusCode: 404,
+          headers: { "content-type": "text/plain" },
+          body: "Not Found",
+        };
       }
-      
-      const checkFinished = setInterval(() => {
-        if (res.finished) {
-          clearInterval(checkFinished);
-          resolve();
-        }
-      }, 10);
+    } else {
+      // Return 404 for unknown paths
+      htmlFile = ".next/standalone/.next/server/app/_not-found.html";
+    }
 
-      // Timeout after 25 seconds
-      setTimeout(() => {
-        clearInterval(checkFinished);
-        resolve();
-      }, 25000);
-    });
-
+    // Read and return the HTML file
+    const html = readFileSync(htmlFile, 'utf8');
+    
     return {
-      statusCode: responseData.statusCode,
-      headers: responseData.headers,
-      body: responseData.body,
+      statusCode: path.startsWith("/_not-found") || (!path.match(/^\/(about)?$/)) ? 404 : 200,
+      headers: {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "public, max-age=0, must-revalidate",
+      },
+      body: html,
     };
   } catch (error) {
     console.error("Handler Error:", error);
