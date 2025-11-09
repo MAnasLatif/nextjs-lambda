@@ -1,8 +1,4 @@
-const http = require('http');
-const { parse } = require('url');
-
-// Load the standalone Next.js server
-const NextServer = require('./.next/standalone/server.js');
+import { parse } from 'url';
 
 let server;
 
@@ -14,7 +10,7 @@ async function startServer() {
   }
 }
 
-module.exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   await startServer();
   
   try {
@@ -27,9 +23,6 @@ module.exports.handler = async (event, context) => {
     
     // Build full URL
     const url = queryString ? `${path}?${queryString}` : path;
-    
-    // Import and use the Next.js request handler
-    const handler = require('./.next/standalone/.next/server/app/page.js');
     
     return {
       statusCode: 200,

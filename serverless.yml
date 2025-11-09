@@ -24,4 +24,4 @@ package:
     - '.next/standalone/**'
     - '.next/static/**'
     - 'public/**'
-    - 'handler.js'
+    - 'handler.mjs'
